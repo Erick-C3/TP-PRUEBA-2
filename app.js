@@ -1,87 +1,103 @@
-// Carrera por la Snitch Dorada
+const prompt = require("prompt-sync")();
 
-let filas = 3;
-let columnas = 30;
+function main() {
 
-let jugadores = [
-  { nombre: "H", fila: 0, pos: 0 },
-  { nombre: "R", fila: 1, pos: 0 },
-  { nombre: "D", fila: 2, pos: 0 }
-];
+  let filas = Number(prompt("Cantidad de filas: "));
+  let columnas = 30;
 
-let filaSnitch = Math.floor(Math.random() * filas);
-let posSnitch = 27;
+  let cantidadJugadores = Number(prompt("Cantidad de jugadores: "));
 
-let ganador = "";
-let turnos = 0;
+  let jugadores = [];
 
-while (ganador == "" && turnos < 50) {
+  for (let i = 0; i < cantidadJugadores; i++) {
 
-  console.clear();
+    let nombre = prompt("Nombre del jugador " + (i + 1) + ": ");
 
-  // matriz
-  let campo = [];
-
-  for (let i = 0; i < filas; i++) {
-    campo[i] = [];
-
-    for (let j = 0; j < columnas; j++) {
-      campo[i][j] = "| |";
-    }
+    jugadores.push({
+      nombre: nombre,
+      fila: i % filas,
+      pos: 0
+    });
   }
 
-  // mover jugadores
-  for (let i = 0; i < jugadores.length; i++) {
+  let filaSnitch = Math.floor(Math.random() * filas);
+  let posSnitch = 27;
 
-    let velocidad = 1;
+  let ganador = "";
+  let turnos = 0;
 
-    if (jugadores[i].pos <= 20) {
-      velocidad = Math.floor(Math.random() * 2) + 1;
+  while (ganador == "" && turnos < 50) {
+
+    console.clear();
+
+    let campo = [];
+
+    for (let i = 0; i < filas; i++) {
+
+      campo[i] = [];
+
+      for (let j = 0; j < columnas; j++) {
+        campo[i][j] = "| |";
+      }
     }
 
-    jugadores[i].pos += velocidad;
+    // mover jugadores
+    for (let i = 0; i < jugadores.length; i++) {
 
-    if (jugadores[i].pos >= columnas) {
-      jugadores[i].pos = columnas - 1;
+      let velocidad = 1;
+
+      if (jugadores[i].pos <= 20) {
+        velocidad = Math.floor(Math.random() * 2) + 1;
+      }
+
+      jugadores[i].pos += velocidad;
+
+      if (jugadores[i].pos >= columnas) {
+        jugadores[i].pos = columnas - 1;
+      }
+
+      // verificar captura
+      if (
+        jugadores[i].fila == filaSnitch &&
+        jugadores[i].pos >= posSnitch
+      ) {
+        ganador = jugadores[i].nombre;
+      }
+
+      campo[jugadores[i].fila][jugadores[i].pos] =
+        "|" + jugadores[i].nombre + "|";
     }
 
-    // verificar ganador
-    if (
-      jugadores[i].fila == filaSnitch &&
-      jugadores[i].pos >= posSnitch
-    ) {
-      ganador = jugadores[i].nombre;
+    // mover snitch de fila
+    filaSnitch = Math.floor(Math.random() * filas);
+
+    campo[filaSnitch][posSnitch] = "|S|";
+
+    // mostrar campo
+    for (let i = 0; i < filas; i++) {
+
+      let linea = "";
+
+      for (let j = 0; j < columnas; j++) {
+        linea += campo[i][j];
+      }
+
+      console.log(linea);
     }
 
-    campo[jugadores[i].fila][jugadores[i].pos] =
-      "|" + jugadores[i].nombre + "|";
+    console.log("\nTurno:", turnos + 1);
+
+    prompt("Presione ENTER para continuar...");
+
+    turnos++;
   }
 
-  // mover snitch de fila
-  filaSnitch = Math.floor(Math.random() * filas);
-
-  campo[filaSnitch][posSnitch] = "|S|";
-
-  // mostrar campo
-  for (let i = 0; i < filas; i++) {
-
-    let linea = "";
-
-    for (let j = 0; j < columnas; j++) {
-      linea += campo[i][j];
-    }
-
-    console.log(linea);
+  // resultado final
+  if (ganador != "") {
+    console.log("\nGanador:", ganador);
+  } else {
+    console.log("\nNo hay ganador");
   }
-
-  console.log("\nTurno:", turnos + 1);
-
-  turnos++;
 }
 
-// resultado final
-if (ganador != "") {
-  console.log("\nGanador:", ganador);
-} else {
-  console.log("\nNo hay ganador");
-}
+main();
