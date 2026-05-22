@@ -1,7 +1,7 @@
 const leer = require("prompt-sync")();
 
 function main() {
-    console.log("funciona");
+    console.log(leer());
 }
 
 main();
